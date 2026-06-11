@@ -4,7 +4,7 @@ __pycache__/
 .env
 
 data/raw/
-saved_models/
+
 
 .idea/
 .vscode/.env.docker
