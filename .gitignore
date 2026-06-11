@@ -7,4 +7,7 @@ data/raw/
 saved_models/
 
 .idea/
-.vscode/
+.vscode/.env.docker
+
+
+.env.docker
