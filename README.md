@@ -17,8 +17,6 @@
 - [Getting Started](#getting-started)
 - [API Reference](#api-reference)
 - [Example Usage](#example-usage)
-- [Screenshots](#screenshots)
-- [Future Enhancements](#future-enhancements)
 - [Author](#author)
 
 ---
@@ -323,35 +321,6 @@ response = requests.post("http://localhost:8000/predict", json=payload)
 print(response.json())
 # {'predicted_rul': 145.21}
 ```
-
----
-
-## Screenshots
-
-### Swagger UI — API Documentation
-
-![Swagger UI](screenshots/swagger.png)
-
-### Prediction History — GET /history
-
-![History Endpoint](screenshots/history.png)
-
-> To add these screenshots: create a `screenshots/` folder in the repo root, take screenshots from `http://localhost:8000/docs`, and save them as `swagger.png` and `history.png`.
-
----
-
-## Future Enhancements
-
-- [ ] **Docker & Docker Compose** — containerize the API, model, and database for one-command deployment
-- [ ] **Cloud Deployment** — deploy to AWS/GCP/Azure with managed PostgreSQL
-- [ ] **Authentication & Authorization** — API key or OAuth2-based access control
-- [ ] **Model Explainability** — SHAP values to explain individual RUL predictions
-- [ ] **Real-Time Sensor Streaming** — Kafka or MQTT integration for live sensor ingestion
-- [ ] **Automated Retraining Pipeline** — trigger retraining when model drift is detected
-- [ ] **Monitoring & Alerting** — Prometheus + Grafana dashboard for prediction drift and API health
-- [ ] **Multi-Dataset Support** — extend beyond FD001 to all four CMAPSS subsets
-
----
 
 ## Project Structure
 
