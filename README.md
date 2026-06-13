@@ -1,6 +1,19 @@
 # Predictive Maintenance & Remaining Useful Life (RUL) Prediction System
 
-> An end-to-end Machine Learning Engineering project that predicts the Remaining Useful Life of industrial turbofan engines using real sensor data, served via a production-ready REST API backed by PostgreSQL.
+> An end-to-end ML Engineering project that predicts the Remaining Useful Life of industrial turbofan engines using real sensor data — containerized with Docker, deployed on Render, and backed by a cloud PostgreSQL database.
+
+[![Live API](https://img.shields.io/badge/Live%20API-Render-46E3B7?style=flat-square)](https://predictive-maintenance-3i1r.onrender.com)
+[![Swagger Docs](https://img.shields.io/badge/Docs-Swagger%20UI-85EA2D?style=flat-square)](https://predictive-maintenance-3i1r.onrender.com/docs)
+---
+
+## Live Demo
+
+| Resource | URL |
+|---|---|
+| **API** | https://predictive-maintenance-3i1r.onrender.com |
+| **Swagger UI** | https://predictive-maintenance-3i1r.onrender.com/docs |
+| **ReDoc** | https://predictive-maintenance-3i1r.onrender.com/redoc |
+| **Database** | Render managed PostgreSQL |
 
 ---
 
@@ -15,8 +28,10 @@
 - [Dataset](#dataset)
 - [Model Performance](#model-performance)
 - [Getting Started](#getting-started)
+- [Docker Setup](#docker-setup)
 - [API Reference](#api-reference)
 - [Example Usage](#example-usage)
+- [Project Structure](#project-structure)
 - [Author](#author)
 
 ---
@@ -31,17 +46,19 @@ By predicting the **Remaining Useful Life (RUL)** of equipment, organizations ca
 - Avoid unnecessary component replacements
 - Significantly reduce unplanned downtime and maintenance costs
 
-The system is trained on NASA's widely used CMAPSS turbofan engine degradation dataset, with XGBoost as the prediction engine and FastAPI exposing a clean REST interface backed by PostgreSQL for persistent prediction history.
+The system is trained on NASA's widely used CMAPSS turbofan engine degradation dataset, with XGBoost as the prediction engine. The application is containerized with Docker, deployed on Render with a cloud PostgreSQL database, and exposes a clean REST API via FastAPI.
 
 ---
 
 ## Key Highlights
 
-- Built an end-to-end Machine Learning pipeline using NASA CMAPSS turbofan engine data
+- Built an end-to-end ML Engineering pipeline using NASA CMAPSS turbofan engine data
 - Trained an XGBoost regression model achieving **MAE of 8.92 cycles**
-- Developed REST APIs using FastAPI for real-time RUL prediction
+- **Deployed on Render** with a cloud PostgreSQL database — live and publicly accessible
+- **Fully containerized** with Docker and docker-compose for one-command local setup
+- REST APIs built with FastAPI for real-time RUL prediction
 - Integrated PostgreSQL and SQLAlchemy for persistent prediction history
-- Documented APIs using Swagger UI (OpenAPI 3.1)
+- Interactive API docs via Swagger UI (OpenAPI 3.1) at `/docs` and `/redoc`
 - Version controlled and managed using Git and GitHub
 
 ---
@@ -79,7 +96,7 @@ XGBoost Regression Model Training
 Model Serialization  →  saved_models/rul_model.pkl  (Joblib)
         │
         ▼
-FastAPI REST API
+FastAPI REST API  ←  Docker Container
     ┌───┴────────────┐
     ▼                ▼
 POST /predict    GET /history
@@ -89,8 +106,8 @@ Prediction       Retrieve stored
  returned        predictions
     │
     ▼
-PostgreSQL  ←  SQLAlchemy ORM
-(Prediction History)
+Cloud PostgreSQL  ←  SQLAlchemy ORM
+(Render Managed DB)
 ```
 
 ---
@@ -103,15 +120,19 @@ PostgreSQL  ←  SQLAlchemy ORM
 - Model persistence via **Joblib** for zero-retraining on server restarts
 
 ### API & Backend
-- **FastAPI** REST API
-- Auto-generated **Swagger UI** and **ReDoc** documentation at `/docs` and `/redoc`
+- **FastAPI** REST API with structured JSON responses and error handling
+- Auto-generated **Swagger UI** and **ReDoc** at `/docs` and `/redoc`
 - Input validation and schema enforcement via **Pydantic**
-- Structured JSON responses with error handling
+
+### Infrastructure & Deployment
+- **Docker** containerization for consistent, reproducible environments
+- **docker-compose** for one-command local setup (API + PostgreSQL together)
+- **Deployed on Render** — live and publicly accessible
+- **Cloud PostgreSQL** managed database on Render for persistent prediction history
 
 ### Database
 - **PostgreSQL** for persistent prediction history
 - **SQLAlchemy** ORM for clean, Pythonic database access
-- Database schema initialization using **SQLAlchemy**
 - Full prediction retrieval via the `/history` endpoint
 
 ---
@@ -128,6 +149,8 @@ PostgreSQL  ←  SQLAlchemy ORM
 | Database | PostgreSQL | Prediction history storage |
 | ORM | SQLAlchemy | Database interaction |
 | Model Serialization | Joblib | Model save/load |
+| Containerization | Docker + docker-compose | Reproducible environment |
+| Deployment | Render | Cloud hosting |
 | API Docs | Swagger UI / ReDoc | Interactive documentation |
 | Version Control | Git & GitHub | Source control |
 
@@ -137,11 +160,11 @@ PostgreSQL  ←  SQLAlchemy ORM
 
 **NASA CMAPSS — Turbofan Engine Degradation Simulation Dataset**
 
-The dataset simulates the operational lifecycle of turbofan engines under varying conditions until failure. It contains:
+The dataset simulates the operational lifecycle of turbofan engines under varying conditions until failure:
 
-- **Engine operational settings** (3 continuous variables)
-- **Sensor measurements** (21 channels: temperature, pressure, speed, etc.)
-- **Run-to-failure trajectories** across hundreds of engines
+- **Engine operational settings** — 3 continuous variables
+- **Sensor measurements** — 21 channels: temperature, pressure, speed, etc.
+- **Run-to-failure trajectories** — across hundreds of engines
 
 **RUL Target Calculation:**
 
@@ -150,7 +173,6 @@ RUL = Maximum Cycle for that Engine − Current Cycle
 ```
 
 Source: [NASA Prognostics Data Repository](https://www.nasa.gov/content/prognostics-center-of-excellence-data-set-repository)
-> Direct link: https://www.nasa.gov/content/prognostics-center-of-excellence-data-set-repository
 
 ---
 
@@ -162,7 +184,7 @@ Source: [NASA Prognostics Data Repository](https://www.nasa.gov/content/prognost
 | **Evaluation Metric** | Mean Absolute Error (MAE) |
 | **Result** | **MAE = 8.92 cycles** |
 
-The model predicts the remaining useful life of an engine with an average error of under 9 cycles — meaning maintenance windows can be scheduled with high confidence well before actual failure.
+The model predicts remaining useful life with an average error under 9 cycles — maintenance windows can be scheduled with high confidence well before actual failure.
 
 ---
 
@@ -170,11 +192,24 @@ The model predicts the remaining useful life of an engine with an average error 
 
 ### Prerequisites
 
-- Python 3.10+
-- PostgreSQL (running locally or via Docker)
-- Git
+- Docker & docker-compose — **recommended, no other setup needed**
+- OR Python 3.10+ with PostgreSQL for manual setup
 
-### Installation
+### Option 1 — Docker (recommended)
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/Soumya-Medichelmila/predictive-maintenance.git
+cd predictive-maintenance
+
+# 2. Start API + PostgreSQL with one command
+docker-compose up --build
+```
+
+API live at `http://localhost:8000`  
+Swagger UI at `http://localhost:8000/docs`
+
+### Option 2 — Manual Setup
 
 ```bash
 # 1. Clone the repository
@@ -189,30 +224,43 @@ source venv/bin/activate        # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-### Environment Configuration
-
 Create a `.env` file in the project root:
 
 ```env
 DATABASE_URL=postgresql://username:password@localhost:5432/rul_db
 ```
 
-### Train the Model
+Train the model:
 
 ```bash
 python app/ml/train.py
 ```
 
-This reads the CMAPSS dataset, runs feature engineering, trains the XGBoost model, and saves it as `saved_models/rul_model.pkl`.
-
-### Start the API Server
+Start the API server:
 
 ```bash
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-API is live at `http://localhost:8000`
-Swagger docs at `http://localhost:8000/docs`
+---
+
+## Docker Setup
+
+```bash
+# Build and start all services
+docker-compose up --build
+
+# Run in detached (background) mode
+docker-compose up -d
+
+# Stop services
+docker-compose down
+
+# Stop and remove volumes (resets the database)
+docker-compose down -v
+```
+
+`docker-compose.yml` orchestrates two services: the FastAPI `api` container and a `db` PostgreSQL container with a persistent volume. No separate database installation required.
 
 ---
 
@@ -286,25 +334,25 @@ Retrieve all stored predictions from the database.
 
 ## Example Usage
 
-Using `curl`:
+**Using `curl` against the live API:**
 
 ```bash
 # Submit a prediction
-curl -X POST http://localhost:8000/predict \
+curl -X POST https://predictive-maintenance-3i1r.onrender.com/predict \
   -H "Content-Type: application/json" \
   -d '{
     "engine_id": 1,
     "cycle": 50,
     "op_setting_1": -0.0007,
     "op_setting_2": -0.0004,
-    "op_setting_3": 100
+    "op_setting_3": 100.0
   }'
 
 # Retrieve prediction history
-curl http://localhost:8000/history
+curl https://predictive-maintenance-3i1r.onrender.com/history
 ```
 
-Using Python:
+**Using Python:**
 
 ```python
 import requests
@@ -314,34 +362,41 @@ payload = {
     "cycle": 50,
     "op_setting_1": -0.0007,
     "op_setting_2": -0.0004,
-    "op_setting_3": 100
+    "op_setting_3": 100.0
 }
 
-response = requests.post("http://localhost:8000/predict", json=payload)
+response = requests.post(
+    "https://predictive-maintenance-3i1r.onrender.com/predict",
+    json=payload
+)
 print(response.json())
 # {'predicted_rul': 145.21}
 ```
+
+---
 
 ## Project Structure
 
 ```
 predictive-maintenance/
 ├── app/
-│   ├── database/         # Database connection and session setup
-│   ├── routes/           # FastAPI route definitions
-│   ├── schemas/          # Pydantic request/response schemas
-│   ├── services/         # Business logic layer
+│   ├── database/             # Database connection and session setup
+│   ├── routes/               # FastAPI route definitions
+│   ├── schemas/              # Pydantic request/response schemas
+│   ├── services/             # Business logic layer
 │   ├── ml/
-│   │   └── train.py      # Model training script
-│   └── main.py           # FastAPI application entry point
+│   │   └── train.py          # Model training script
+│   └── main.py               # FastAPI application entry point
 ├── data/
 │   └── raw/
 │       └── train_FD001.txt   # NASA CMAPSS dataset
 ├── saved_models/
-│   └── rul_model.pkl     # Serialized XGBoost model (generated)
-├── create_tables.py      # Database schema initialization
-├── requirements.txt      # Python dependencies
-├── .env.example          # Environment variable template
+│   └── rul_model.pkl         # Serialized XGBoost model (generated)
+├── Dockerfile                # Container image definition
+├── docker-compose.yml        # Multi-service orchestration
+├── create_tables.py          # Database schema initialization
+├── requirements.txt          # Python dependencies
+├── .env.example              # Environment variable template
 └── README.md
 ```
 
@@ -349,13 +404,13 @@ predictive-maintenance/
 
 ## Author
 
-Developed as a full-stack Machine Learning Engineering project, demonstrating end-to-end proficiency across:
+Developed as a full-stack ML Engineering project, demonstrating end-to-end proficiency across:
 
 - **ML Engineering** — data preprocessing, feature engineering, model training & evaluation
-- **MLOps Fundamentals** — model serialization, versioning, and serving
+- **MLOps** — model serialization, Docker containerization, cloud deployment on Render
 - **Backend Development** — RESTful API design with FastAPI
-- **Database Integration** — PostgreSQL with SQLAlchemy ORM
-- **Software Engineering** — clean project structure, validation, error handling
+- **Database Integration** — cloud PostgreSQL with SQLAlchemy ORM
+- **Software Engineering** — clean project structure, input validation, error handling, API documentation
 
 ---
 
